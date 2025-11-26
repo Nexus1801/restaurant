@@ -35,4 +35,16 @@
     <string name="coreduedate">Due Date</string>
     <string name="coduedate">Due Date</string>
     <string name="lbtitle">Book Title</string>
+    <string name="employee_id">Employee ID</string>
+    <string name="password">Password</string>
+    <string name="clock_in">Clock In</string>
+    <string name="login">Login</string>
+    <string name="my_tables">My Tables</string>
+    <string name="new_order">New Order</string>
+    <string name="active_orders">Active Orders</string>
+    <string name="menu">Menu</string>
+    <string name="floor_plan">Floor Plan</string>
+    <string name="search_menu">Search menu...</string>
+    <string name="select_table">Select Table</string>
+    <string name="add_to_cart">Add to Cart</string>
 </resources>

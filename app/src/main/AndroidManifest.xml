@@ -10,17 +10,81 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme">
+
+        <!-- Login Activity - MAIN LAUNCHER -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Server Activities -->
+        <activity
+            android:name=".ServerMainActivity"
+            android:label="Server Dashboard" />
+        <activity
+            android:name=".TablesActivity"
+            android:label="Tables" />
+        <activity
+            android:name=".NewOrderActivity"
+            android:label="New Order" />
+        <activity
+            android:name=".CartActivity"
+            android:label="Cart" />
+        <activity
+            android:name=".ActiveOrdersActivity"
+            android:label="Active Orders" />
+        <activity
+            android:name=".MenuActivity"
+            android:label="Menu" />
+
+        <!-- Manager Activities -->
+        <activity
+            android:name=".ManagerMainActivity"
+            android:label="Manager Dashboard" />
+        <activity
+            android:name=".ReportsActivity"
+            android:label="Reports" />
+        <activity
+            android:name=".StaffManagementActivity"
+            android:label="Staff Management" />
+        <activity
+            android:name=".InventoryActivity"
+            android:label="Inventory" />
+        <activity
+            android:name=".MenuManagementActivity"
+            android:label="Menu Management" />
+
+        <!-- Host Activities -->
+        <activity
+            android:name=".HostMainActivity"
+            android:label="Host Station" />
+        <activity
+            android:name=".ReservationsActivity"
+            android:label="Reservations" />
+
+        <!-- Kitchen Activities -->
+        <activity
+            android:name=".KitchenActivity"
+            android:label="Kitchen Display" />
+
+        <!-- Shared Activities -->
+        <activity
+            android:name=".QueryActivity"
+            android:label="Query Results" />
+
+        <!-- Original MainActivity - NO LAUNCHER -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
     </application>
 
 </manifest>
