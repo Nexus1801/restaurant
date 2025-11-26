@@ -10,7 +10,7 @@ public abstract class DBConstant
     //database file directory
     public static String DATABASE_PATH = "/data/data/com.example.restaurant/databases";
     //database file name
-    public static String DATABASE_FILE = "restaurant.db";
+    public static String DATABASE_FILE = "Group.AlphaRestraunt.db";
     //database version
     public static int DATABASE_VERSION = 1;
 }
