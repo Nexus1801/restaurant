@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:text="Table 1"
             android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="#1F2937"/>
 
         <TextView
             android:id="@+id/tv_table_type"
@@ -28,8 +29,8 @@
             android:layout_height="wrap_content"
             android:text="Booth"
             android:textSize="14sp"
-            android:textColor="#6B7280"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_party_size"
@@ -39,17 +40,6 @@
             android:textSize="14sp"
             android:textColor="#6B7280"
             android:layout_marginTop="2dp"/>
-
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Available"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="4dp"
-            android:layout_marginTop="8dp"/>
 
     </LinearLayout>
 

@@ -29,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // CRITICAL: Initialize database FIRST
         try {
             DBOperator.copyDB(getApplicationContext());
             Toast.makeText(this, "Database initialized", Toast.LENGTH_SHORT).show();
@@ -123,8 +122,8 @@ public class LoginActivity extends AppCompatActivity {
                     intent = new Intent(LoginActivity.this, ServerMainActivity.class);
                 } else if (empRole.equals("Host")) {
                     intent = new Intent(LoginActivity.this, HostMainActivity.class);
-                } else if (empRole.equals("Bartender")) {
-                    intent = new Intent(LoginActivity.this, ServerMainActivity.class);
+                } else if (empRole.equals("Chef")) {
+                    intent = new Intent(LoginActivity.this, KitchenActivity.class);
                 } else {
                     // Default to Server for any other role
                     intent = new Intent(LoginActivity.this, ServerMainActivity.class);

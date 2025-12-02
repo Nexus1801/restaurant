@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reports"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btn_sales_report"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sales Summary"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_top_selling"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Top 5 Best Sellers"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_peak_times"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Peak Order Times"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_payment_analysis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Payment Analysis"
+        android:layout_marginBottom="16dp" />
+
+    <ScrollView
+        android:id="@+id/scroll_report_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ScrollView>
+
+</LinearLayout>

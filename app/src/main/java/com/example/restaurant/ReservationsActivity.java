@@ -20,33 +20,30 @@ import com.example.restaurant.view.TableView;
 
 import java.util.ArrayList;
 import java.util.List;
+class ReservationsActivity extends AppCompatActivity {
 
-public class MenuManagementActivity extends AppCompatActivity {
-
-    private RecyclerView rvMenu;
+    private RecyclerView rvReservations;
     private DBOperator dbOperator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_management);
+        setContentView(R.layout.activity_reservations);
 
         dbOperator = DBOperator.getInstance();
 
-        rvMenu = findViewById(R.id.rv_menu_mgmt);
-        rvMenu.setLayoutManager(new LinearLayoutManager(this));
+        rvReservations = findViewById(R.id.rv_all_reservations);
+        rvReservations.setLayoutManager(new LinearLayoutManager(this));
 
-        loadMenu();
+        loadAllReservations();
     }
 
-    private void loadMenu() {
+    private void loadAllReservations() {
         try {
-            Cursor cursor = dbOperator.execQuery(
-                    "SELECT Menu_DishID, Menu_name, Menu_cat, Menu_price, Menu_available FROM Menu"
-            );
+            Cursor cursor = dbOperator.execQuery(SQLCommand.QUERY_RESERVATIONS);
 
             if (cursor != null) {
-                Toast.makeText(this, cursor.getCount() + " menu items", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, cursor.getCount() + " reservations found", Toast.LENGTH_SHORT).show();
                 cursor.close();
             }
         } catch (Exception e) {
@@ -54,3 +51,4 @@ public class MenuManagementActivity extends AppCompatActivity {
         }
     }
 }
+

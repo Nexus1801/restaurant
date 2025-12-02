@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.restaurant.constant.SQLCommand;
 import com.example.restaurant.util.DBOperator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,13 +35,17 @@ public class NewOrderActivity extends AppCompatActivity {
     private Spinner spinnerTable;
     private EditText etSearch;
     private RecyclerView rvMenuItems;
-    private TextView tvCartCount;
+    private TextView tvCartCount, tvCartItemsCount;
     private ImageButton btnCart;
+    private Button btnViewCart;
     private DBOperator dbOperator;
     private MenuAdapter adapter;
     private List<MenuItem> menuItems;
     private List<MenuItem> filteredItems;
-    private Map<String, Integer> cart; // dishID -> quantity
+    private String currentFilter = "All";
+
+    // Cart: Map of dishID -> CartItem
+    public static Map<String, CartItem> cart = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,14 +53,15 @@ public class NewOrderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_order);
 
         dbOperator = DBOperator.getInstance();
-        cart = new HashMap<>();
 
         // Initialize views
         spinnerTable = findViewById(R.id.spinner_table);
         etSearch = findViewById(R.id.et_search);
         rvMenuItems = findViewById(R.id.rv_menu_items);
         tvCartCount = findViewById(R.id.tv_cart_count);
+        tvCartItemsCount = findViewById(R.id.tv_cart_items_count);
         btnCart = findViewById(R.id.btn_cart);
+        btnViewCart = findViewById(R.id.btn_view_cart);
 
         rvMenuItems.setLayoutManager(new GridLayoutManager(this, 2));
 
@@ -64,6 +70,9 @@ public class NewOrderActivity extends AppCompatActivity {
 
         // Load menu items
         loadMenuItems();
+
+        // Update cart count display
+        updateCartCount();
 
         // Search functionality
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -79,19 +88,50 @@ public class NewOrderActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        // Cart button
+        // Category filter buttons
+        findViewById(R.id.btn_filter_all).setOnClickListener(v -> filterByCategory("All"));
+        findViewById(R.id.btn_filter_entree).setOnClickListener(v -> filterByCategory("Entree"));
+        findViewById(R.id.btn_filter_appetizer).setOnClickListener(v -> filterByCategory("Appetizer"));
+        findViewById(R.id.btn_filter_side).setOnClickListener(v -> filterByCategory("Side"));
+        findViewById(R.id.btn_filter_drink).setOnClickListener(v -> filterByCategory("Drink"));
+        findViewById(R.id.btn_filter_dessert).setOnClickListener(v -> filterByCategory("Dessert"));
+
+        // Cart button (top right icon)
         btnCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (cart.isEmpty()) {
-                    Toast.makeText(NewOrderActivity.this, "Cart is empty", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent intent = new Intent(NewOrderActivity.this, CartActivity.class);
-                    // Pass cart data
-                    startActivity(intent);
-                }
+                openCart();
             }
         });
+
+        // View Cart button (bottom bar)
+        btnViewCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openCart();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Update cart count when returning from cart
+        updateCartCount();
+    }
+
+    private void openCart() {
+        if (cart.isEmpty()) {
+            Toast.makeText(this, "Cart is empty", Toast.LENGTH_SHORT).show();
+        } else {
+            // Get selected table
+            String selectedTable = spinnerTable.getSelectedItem().toString();
+
+            // Navigate to cart
+            Intent intent = new Intent(NewOrderActivity.this, CartActivity.class);
+            intent.putExtra("selected_table", selectedTable);
+            startActivity(intent);
+        }
     }
 
     private void loadAvailableTables() {
@@ -99,9 +139,9 @@ public class NewOrderActivity extends AppCompatActivity {
         tables.add("Select Table");
 
         try {
-            Cursor cursor = dbOperator.execQuery(
-                    "SELECT DT_number FROM Dining_table WHERE DT_status = 'Available' ORDER BY DT_number"
-            );
+            // FIXED: No DT_status column - only select 4 columns
+            String query = "SELECT DT_number FROM Dining_table ORDER BY DT_number";
+            Cursor cursor = dbOperator.execQuery(query);
 
             if (cursor != null) {
                 while (cursor.moveToNext()) {
@@ -111,6 +151,7 @@ public class NewOrderActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Error loading tables: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -145,18 +186,50 @@ public class NewOrderActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error loading menu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error loading menu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void filterByCategory(String category) {
+        currentFilter = category;
+        filteredItems.clear();
+
+        if (category.equals("All")) {
+            filteredItems.addAll(menuItems);
+        } else {
+            for (MenuItem item : menuItems) {
+                if (item.category.equalsIgnoreCase(category)) {
+                    filteredItems.add(item);
+                }
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 
     private void filterMenuItems(String query) {
         filteredItems.clear();
 
         if (query.isEmpty()) {
-            filteredItems.addAll(menuItems);
+            // Apply category filter
+            if (currentFilter.equals("All")) {
+                filteredItems.addAll(menuItems);
+            } else {
+                for (MenuItem item : menuItems) {
+                    if (item.category.equalsIgnoreCase(currentFilter)) {
+                        filteredItems.add(item);
+                    }
+                }
+            }
         } else {
+            // Search within current category
             String lowerQuery = query.toLowerCase();
-            for (MenuItem item : menuItems) {
+            List<MenuItem> itemsToSearch = currentFilter.equals("All") ? menuItems :
+                    menuItems.stream()
+                            .filter(item -> item.category.equalsIgnoreCase(currentFilter))
+                            .collect(java.util.stream.Collectors.toList());
+
+            for (MenuItem item : itemsToSearch) {
                 if (item.name.toLowerCase().contains(lowerQuery) ||
                         item.category.toLowerCase().contains(lowerQuery)) {
                     filteredItems.add(item);
@@ -169,30 +242,56 @@ public class NewOrderActivity extends AppCompatActivity {
 
     private void addToCart(MenuItem item) {
         if (cart.containsKey(item.dishID)) {
-            cart.put(item.dishID, cart.get(item.dishID) + 1);
+            // Increment quantity
+            CartItem cartItem = cart.get(item.dishID);
+            cartItem.quantity++;
         } else {
-            cart.put(item.dishID, 1);
+            // Add new item
+            CartItem cartItem = new CartItem();
+            cartItem.dishID = item.dishID;
+            cartItem.name = item.name;
+            cartItem.price = item.price;
+            cartItem.quantity = 1;
+            cart.put(item.dishID, cartItem);
         }
+
         updateCartCount();
         Toast.makeText(this, item.name + " added to cart", Toast.LENGTH_SHORT).show();
     }
 
     private void updateCartCount() {
         int totalItems = 0;
-        for (int qty : cart.values()) {
-            totalItems += qty;
+        for (CartItem item : cart.values()) {
+            totalItems += item.quantity;
         }
-        tvCartCount.setText(String.valueOf(totalItems));
-        tvCartCount.setVisibility(totalItems > 0 ? View.VISIBLE : View.GONE);
+
+        // Update badge on top right icon
+        if (totalItems > 0) {
+            tvCartCount.setText(String.valueOf(totalItems));
+            tvCartCount.setVisibility(View.VISIBLE);
+        } else {
+            tvCartCount.setVisibility(View.GONE);
+        }
+
+        // Update bottom bar text
+        tvCartItemsCount.setText(totalItems + " item" + (totalItems != 1 ? "s" : ""));
     }
 
     // MenuItem model class
-    private static class MenuItem {
-        String dishID;
-        String name;
-        String category;
-        int price;
-        String available;
+    public static class MenuItem {
+        public String dishID;
+        public String name;
+        public String category;
+        public int price;
+        public String available;
+    }
+
+    // CartItem model class
+    public static class CartItem implements Serializable {
+        public String dishID;
+        public String name;
+        public int price;
+        public int quantity;
     }
 
     // Adapter for menu items

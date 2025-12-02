@@ -78,9 +78,9 @@ public abstract class SQLCommand {
 
     // Query 7: Available Tables by Party Size
     public static String QUERY_AVAILABLE_TABLES =
-            "SELECT DT_id, DT_number, DT_party_size, DT_table_type, DT_status " +
+            "SELECT DT_id, DT_number, DT_party_size, DT_table_type " +
                     "FROM Dining_table " +
-                    "WHERE DT_status = 'Available' AND DT_party_size >= ? " +
+                    "WHERE DT_party_size >= ? " +
                     "ORDER BY DT_party_size";
 
     // Query 8: Inventory Alerts (Low Stock)
@@ -184,9 +184,10 @@ public abstract class SQLCommand {
 
     // Additional useful queries for the app
 
-    // Get all tables with their current status
+    // Get all tables
     public static String QUERY_ALL_TABLES =
-            "SELECT * FROM Dining_table ORDER BY DT_number";
+            "SELECT DT_id, DT_number, DT_party_size, DT_table_type " +
+                    "FROM Dining_table ORDER BY DT_number";
 
     // Get menu by category
     public static String QUERY_MENU_BY_CATEGORY =
@@ -211,15 +212,6 @@ public abstract class SQLCommand {
     // Update order status
     public static String UPDATE_ORDER_STATUS =
             "UPDATE Orders SET Order_status = ? WHERE Order_id = ?";
-
-    // Update table status
-    public static String UPDATE_TABLE_STATUS =
-            "UPDATE Dining_table SET DT_status = ? WHERE DT_id = ?";
-
-    // Insert payment
-    public static String INSERT_PAYMENT =
-            "INSERT INTO Payments(Pay_id, Pay_Cust_id, Pay_Order_id, " +
-                    "Pay_type, Pay_time) VALUES(?, ?, ?, ?, ?)";
 
     // Update inventory
     public static String UPDATE_INVENTORY =

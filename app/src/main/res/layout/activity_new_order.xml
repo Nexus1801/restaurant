@@ -2,75 +2,214 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#F3F4F6">
 
-    <!-- Header with cart button -->
-    <RelativeLayout
+    <!-- Header with Cart Button -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Order"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:layout_centerVertical="true"/>
-
+        <!-- Title and Cart Icon Row -->
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true">
-
-            <ImageButton
-                android:id="@+id/btn_cart"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_add"
-                android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:layout_marginBottom="12dp">
 
             <TextView
-                android:id="@+id/tv_cart_count"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="New Order"
                 android:textColor="@android:color/white"
-                android:background="@color/colorAccent"
-                android:gravity="center"
-                android:textSize="10sp"
-                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:visibility="gone"/>
+                android:layout_centerVertical="true">
+
+                <ImageButton
+                    android:id="@+id/btn_cart"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="View Cart"
+                    android:src="@android:drawable/ic_menu_add"
+                    android:tint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/tv_cart_count"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:background="@android:color/holo_red_dark"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
         </RelativeLayout>
-    </RelativeLayout>
 
-    <!-- Table Selection -->
-    <Spinner
-        android:id="@+id/spinner_table"
+        <!-- Table Selection -->
+        <Spinner
+            android:id="@+id/spinner_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:background="@android:color/white"
+            android:padding="12dp" />
+
+        <!-- Search Bar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:hint="Search menu..."
+                android:padding="12dp"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="8dp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <!-- Category Filter Buttons -->
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"/>
+        android:padding="8dp"
+        android:scrollbars="none">
 
-    <!-- Search -->
-    <EditText
-        android:id="@+id/et_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search menu..."
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        android:padding="12dp"
-        android:background="@android:drawable/editbox_background"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_filter_all"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="All"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_filter_entree"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#6B7280"
+                android:text="Entree"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_filter_appetizer"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#6B7280"
+                android:text="Appetizer"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_filter_side"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#6B7280"
+                android:text="Side"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_filter_drink"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#6B7280"
+                android:text="Drink"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btn_filter_dessert"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:backgroundTint="#6B7280"
+                android:text="Dessert"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <!-- Menu Items Grid -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_menu_items"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
+
+    <!-- Bottom Action Bar with View Cart Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Items in Cart"
+                android:textColor="#6B7280"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_cart_items_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 items"
+                android:textColor="#111827"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_view_cart"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingStart="32dp"
+            android:paddingEnd="32dp"
+            android:text="View Cart"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </LinearLayout>
