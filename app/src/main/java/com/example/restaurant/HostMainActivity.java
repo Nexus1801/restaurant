@@ -248,8 +248,10 @@ public class HostMainActivity extends AppCompatActivity {
 
     private void createReservation(String customerName, String phone, int partySize) {
         try {
-            // First, find or create customer
-            String customerId = "CUST" + System.currentTimeMillis() % 10000;
+            // Generate unique IDs using timestamp
+            long timestamp = System.currentTimeMillis();
+            String customerId = "CUST" + (timestamp % 100000);
+            String resId = "RES" + ((timestamp + 1) % 100000);
 
             // Find available table for party size
             Cursor tableCursor = dbOperator.execQuery(
@@ -269,29 +271,31 @@ public class HostMainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Insert customer
-            String insertCustomer = "INSERT INTO Customer VALUES ('" + customerId + "', '" +
-                    customerName + "', '" + phone + "')";
-            dbOperator.execQuery(insertCustomer);
-
             // Format date for SQLite
             SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
             String dateStr = dbFormat.format(selectedDateTime.getTime());
 
-            // Insert reservation
-            String resId = "RES" + System.currentTimeMillis() % 10000;
-            String insertRes = "INSERT INTO Reservation VALUES ('" + resId + "', '" +
-                    customerId + "', '" + tableId + "', '" + dateStr + "', '" +
-                    dateStr + "', " + partySize + ", 'Confirmed')";
-            dbOperator.execQuery(insertRes);
+            // Insert customer using execSQL with parameters
+            dbOperator.execSQL(
+                    "INSERT INTO Customer (Cust_id, Cust_name, Cust_Number) VALUES (?, ?, ?)",
+                    new Object[]{customerId, customerName, phone}
+            );
+
+            // Insert reservation using execSQL with parameters
+            dbOperator.execSQL(
+                    "INSERT INTO Reservation (Res_id, Res_Cust_id, Res_DT_id, Res_date, Res_start_item, Res_party_size, Res_status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    new Object[]{resId, customerId, tableId, dateStr, dateStr, partySize, "Confirmed"}
+            );
 
             Toast.makeText(this, "Reservation created successfully!", Toast.LENGTH_SHORT).show();
+
+            // Refresh the dashboard and reservations list
             loadDashboardData();
             loadUpcomingReservations();
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error creating reservation", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error creating reservation: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -354,6 +358,38 @@ public class HostMainActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void seatReservation(Reservation res) {
+        try {
+            // Use execSQL for UPDATE statements
+            dbOperator.execSQL(
+                    "UPDATE Reservation SET Res_status = ? WHERE Res_id = ?",
+                    new Object[]{"Completed", res.id}
+            );
+            Toast.makeText(this, res.customerName + " has been seated", Toast.LENGTH_SHORT).show();
+            loadDashboardData();
+            loadUpcomingReservations();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error seating reservation", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void cancelReservation(Reservation res) {
+        try {
+            // Use execSQL for UPDATE statements
+            dbOperator.execSQL(
+                    "UPDATE Reservation SET Res_status = ? WHERE Res_id = ?",
+                    new Object[]{"Cancelled", res.id}
+            );
+            Toast.makeText(this, "Reservation cancelled", Toast.LENGTH_SHORT).show();
+            loadDashboardData();
+            loadUpcomingReservations();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error cancelling reservation", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -480,32 +516,6 @@ public class HostMainActivity extends AppCompatActivity {
                 tvTableType = itemView.findViewById(R.id.tv_table_type_sel);
                 tvCapacity = itemView.findViewById(R.id.tv_table_capacity_sel);
             }
-        }
-    }
-
-    private void seatReservation(Reservation res) {
-        try {
-            String updateQuery = "UPDATE Reservation SET Res_status = 'Completed' WHERE Res_id = '" + res.id + "'";
-            dbOperator.execQuery(updateQuery);
-            Toast.makeText(this, res.customerName + " has been seated", Toast.LENGTH_SHORT).show();
-            loadDashboardData();
-            loadUpcomingReservations();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error seating reservation", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void cancelReservation(Reservation res) {
-        try {
-            String updateQuery = "UPDATE Reservation SET Res_status = 'Cancelled' WHERE Res_id = '" + res.id + "'";
-            dbOperator.execQuery(updateQuery);
-            Toast.makeText(this, "Reservation cancelled", Toast.LENGTH_SHORT).show();
-            loadDashboardData();
-            loadUpcomingReservations();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Error cancelling reservation", Toast.LENGTH_SHORT).show();
         }
     }
 }

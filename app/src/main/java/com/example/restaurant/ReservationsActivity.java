@@ -170,8 +170,10 @@ public class ReservationsActivity extends AppCompatActivity {
 
     private void seatReservation(Reservation res) {
         try {
-            String updateQuery = "UPDATE Reservation SET Res_status = 'Completed' WHERE Res_id = '" + res.id + "'";
-            dbOperator.execQuery(updateQuery);
+            dbOperator.execSQL(
+                    "UPDATE Reservation SET Res_status = ? WHERE Res_id = ?",
+                    new Object[]{"Completed", res.id}
+            );
             Toast.makeText(this, res.customerName + " has been seated", Toast.LENGTH_SHORT).show();
             loadReservations();
         } catch (Exception e) {
@@ -182,8 +184,10 @@ public class ReservationsActivity extends AppCompatActivity {
 
     private void cancelReservation(Reservation res) {
         try {
-            String updateQuery = "UPDATE Reservation SET Res_status = 'Cancelled' WHERE Res_id = '" + res.id + "'";
-            dbOperator.execQuery(updateQuery);
+            dbOperator.execSQL(
+                    "UPDATE Reservation SET Res_status = ? WHERE Res_id = ?",
+                    new Object[]{"Cancelled", res.id}
+            );
             Toast.makeText(this, "Reservation cancelled", Toast.LENGTH_SHORT).show();
             loadReservations();
         } catch (Exception e) {
