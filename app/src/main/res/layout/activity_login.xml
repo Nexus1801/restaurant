@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Restaurant POS"
+        android:text="MIS 517 Steakhouse"
         android:textSize="32sp"
         android:textStyle="bold"
         android:textColor="#000000"
@@ -88,7 +88,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Test Employee IDs:\nEMP001 (Server)\nEMP004 (Manager)\nEMP005 (Host)"
+        android:text="Test Employee IDs:\nEMP001 (Server)\nEMP004 (Manager)\nEMP005 (Host)\nEMP006 (Chef)"
         android:textSize="12sp"
         android:textColor="#999999"
         android:gravity="center"/>

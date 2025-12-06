@@ -34,7 +34,7 @@ public class HostMainActivity extends AppCompatActivity {
     private TextView tvWelcome, tvPendingReservations, tvAvailableTables;
     private CardView cvFloorPlan, cvReservations, cvWaitlist, cvSeating;
     private RecyclerView rvUpcomingReservations;
-    private Button btnNewReservation;
+    private Button btnNewReservation, btnLogout;
     private DBOperator dbOperator;
     private String employeeName;
 
@@ -67,6 +67,7 @@ public class HostMainActivity extends AppCompatActivity {
         rvUpcomingReservations.setLayoutManager(new LinearLayoutManager(this));
 
         btnNewReservation = findViewById(R.id.btn_new_reservation);
+        btnLogout = findViewById(R.id.btn_logout);
 
         tvWelcome.setText("Welcome, " + employeeName);
 
@@ -94,6 +95,45 @@ public class HostMainActivity extends AppCompatActivity {
         btnNewReservation.setOnClickListener(v -> {
             showNewReservationDialog();
         });
+
+        // Logout button click listener
+        btnLogout.setOnClickListener(v -> {
+            showLogoutConfirmation();
+        });
+    }
+
+    // Handle back button press
+    @Override
+    public void onBackPressed() {
+        showLogoutConfirmation();
+    }
+
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    logout();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void logout() {
+        // Clear saved preferences
+        SharedPreferences prefs = getSharedPreferences("RestaurantApp", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.apply();
+
+        // Show logout message
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+        // Navigate back to LoginActivity
+        Intent intent = new Intent(HostMainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -275,6 +315,8 @@ public class HostMainActivity extends AppCompatActivity {
             SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
             String dateStr = dbFormat.format(selectedDateTime.getTime());
 
+            // *** FIXED: Use execSQL for INSERT statements ***
+
             // Insert customer using execSQL with parameters
             dbOperator.execSQL(
                     "INSERT INTO Customer (Cust_id, Cust_name, Cust_Number) VALUES (?, ?, ?)",
@@ -360,6 +402,8 @@ public class HostMainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    // *** Methods to update reservation status ***
 
     private void seatReservation(Reservation res) {
         try {

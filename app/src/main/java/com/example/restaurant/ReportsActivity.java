@@ -2,29 +2,24 @@ package com.example.restaurant;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.restaurant.constant.SQLCommand;
 import com.example.restaurant.util.DBOperator;
 import com.example.restaurant.view.TableView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ReportsActivity extends AppCompatActivity {
 
     private Button btnSalesReport, btnTopSelling, btnPeakTimes, btnPaymentAnalysis;
     private ScrollView scrollResults;
+    private LinearLayout reportContainer;
     private DBOperator dbOperator;
 
     @Override
@@ -39,6 +34,15 @@ public class ReportsActivity extends AppCompatActivity {
         btnPeakTimes = findViewById(R.id.btn_peak_times);
         btnPaymentAnalysis = findViewById(R.id.btn_payment_analysis);
         scrollResults = findViewById(R.id.scroll_report_results);
+
+        // Create a LinearLayout container to hold multiple views inside ScrollView
+        reportContainer = new LinearLayout(this);
+        reportContainer.setOrientation(LinearLayout.VERTICAL);
+        reportContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        scrollResults.addView(reportContainer);
 
         btnSalesReport.setOnClickListener(v -> showReport("Sales Summary",
                 "SELECT 'Total Sales' as Metric, SUM(Order_Total) as Value FROM Orders " +
@@ -57,24 +61,40 @@ public class ReportsActivity extends AppCompatActivity {
 
     private void showReport(String title, String query) {
         try {
-            scrollResults.removeAllViews();
+            // Clear the container, not the ScrollView
+            reportContainer.removeAllViews();
 
+            // Create title TextView
             TextView tvTitle = new TextView(this);
             tvTitle.setText(title);
             tvTitle.setTextSize(20);
+            tvTitle.setTextColor(getResources().getColor(android.R.color.black));
             tvTitle.setPadding(16, 16, 16, 16);
 
+            // Add title to container
+            reportContainer.addView(tvTitle);
+
+            // Execute query and create table
             Cursor cursor = dbOperator.execQuery(query);
-            if (cursor != null) {
+            if (cursor != null && cursor.getCount() > 0) {
                 TableView tableView = new TableView(this, cursor);
-                scrollResults.addView(tvTitle);
-                scrollResults.addView(tableView);
+                reportContainer.addView(tableView);
 
                 Toast.makeText(this, title + " generated", Toast.LENGTH_SHORT).show();
+            } else {
+                // Show empty state
+                TextView tvEmpty = new TextView(this);
+                tvEmpty.setText("No data available for this report.");
+                tvEmpty.setTextSize(16);
+                tvEmpty.setPadding(16, 32, 16, 32);
+                tvEmpty.setTextColor(getResources().getColor(android.R.color.darker_gray));
+                reportContainer.addView(tvEmpty);
+
+                Toast.makeText(this, "No data found", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Error generating report", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error generating report: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#F3F4F6">
 
     <!-- Header -->
     <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@color/colorPrimary"
         android:orientation="vertical"
         android:padding="16dp">
@@ -19,7 +20,7 @@
             android:layout_height="wrap_content"
             android:text="Host Station"
             android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -29,12 +30,28 @@
             android:text="Welcome, Host"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:layout_marginTop="4dp" />
+            android:alpha="0.9" />
     </LinearLayout>
 
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/btn_logout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:text="🚪  LOGOUT"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="#EF4444"
+        android:textColor="@android:color/white" />
+
+    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:layout_above="@id/btn_logout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -310,4 +327,4 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>
