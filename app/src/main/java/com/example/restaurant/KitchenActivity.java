@@ -1,5 +1,7 @@
 package com.example.restaurant;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,6 +38,8 @@ public class KitchenActivity extends AppCompatActivity {
     private Handler autoRefreshHandler;
     private Runnable autoRefreshRunnable;
 
+    private Button btnLogout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,7 @@ public class KitchenActivity extends AppCompatActivity {
         tvOrderQueue = findViewById(R.id.tv_order_queue);
         tvInProgress = findViewById(R.id.tv_in_progress);
         btnRefresh = findViewById(R.id.btn_refresh);
+        btnLogout = findViewById(R.id.btn_logout);
 
         rvOrders.setLayoutManager(new LinearLayoutManager(this));
 
@@ -59,6 +65,14 @@ public class KitchenActivity extends AppCompatActivity {
             Toast.makeText(this, "Orders refreshed", Toast.LENGTH_SHORT).show();
         });
 
+        // Logout button click listener
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutConfirmation();
+            }
+        });
+
         // Auto-refresh every 30 seconds
         autoRefreshHandler = new Handler();
         autoRefreshRunnable = new Runnable() {
@@ -69,6 +83,8 @@ public class KitchenActivity extends AppCompatActivity {
             }
         };
         autoRefreshHandler.postDelayed(autoRefreshRunnable, 30000);
+
+
     }
 
     @Override
@@ -131,6 +147,40 @@ public class KitchenActivity extends AppCompatActivity {
             e.printStackTrace();
             Toast.makeText(this, "Error loading orders", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    logout();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void logout() {
+        // Clear saved preferences
+        SharedPreferences prefs = getSharedPreferences("RestaurantApp", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.apply();
+
+        // Show logout message
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
+
+        // Navigate back to LoginActivity
+        Intent intent = new Intent(KitchenActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    // Handle back button press
+    @Override
+    public void onBackPressed() {
+        showLogoutConfirmation();
     }
 
     private void updateOrderStatus(String orderId, String newStatus) {
